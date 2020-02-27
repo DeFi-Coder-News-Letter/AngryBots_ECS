@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -20,9 +21,24 @@ public class EnemyBehaviour : MonoBehaviour, IConvertGameObjectToEntity
 
 	void Update()
 	{
-		if (!Settings.IsPlayerDead())
+		if (Settings.AnyPlayerAlive())
 		{
-			Vector3 heading = Settings.PlayerPosition - transform.position;
+			var playerPositions = Settings.PlayerPositions;
+			var minDirPlayer = playerPositions[0];
+			var minDist = 0.0f;
+			float3 pos = transform.position;
+			for (int i = 1; i < playerPositions.Length; ++i)
+			{
+				var dirPlayer = playerPositions[i] - pos;
+				var dist = math.dot(dirPlayer, dirPlayer);
+				if (dist < minDist)
+				{
+					minDist = dist;
+					minDirPlayer = dirPlayer;
+				}
+			}
+
+			Vector3 heading = minDirPlayer;
 			heading.y = 0f;
 			transform.rotation = Quaternion.LookRotation(heading);
 		}

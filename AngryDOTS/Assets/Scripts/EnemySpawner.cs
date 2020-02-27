@@ -32,7 +32,7 @@ public class EnemySpawner : MonoBehaviour
 
 	void Update()
     {
-		if (!spawnEnemies || Settings.IsPlayerDead())
+		if (!spawnEnemies || !Settings.AnyPlayerAlive())
 			return;
 
 		cooldown -= Time.deltaTime;
@@ -48,7 +48,8 @@ public class EnemySpawner : MonoBehaviour
 	{
 		for (int i = 0; i < spawnsPerInterval; i++)
 		{
-			Vector3 pos = Settings.GetPositionAroundPlayer(enemySpawnRadius);
+			int playerIdx = Random.Range(0, Settings.GetPlayerAliveCount());
+			Vector3 pos = Settings.GetPositionAroundPlayer(playerIdx, enemySpawnRadius);
 
 			if (!useECS)
 			{

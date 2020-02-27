@@ -2,4 +2,7 @@
 using Unity.Entities;
 
 [Serializable]
-public struct PlayerTag : IComponentData {}
+public struct PlayerTag : IComponentData 
+{
+    public int playerIdx;
+}

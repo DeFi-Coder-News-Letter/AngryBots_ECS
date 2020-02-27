@@ -13,11 +13,26 @@ public class TurnTowardsPlayerSystem : JobComponentSystem
 	[RequireComponentTag(typeof(EnemyTag))]
 	struct TurnJob : IJobForEach<Translation, Rotation>
 	{
-		public float3 playerPosition; 
+		[DeallocateOnJobCompletion]
+		[ReadOnly] public NativeArray<float3> playerPositions;
 
 		public void Execute([ReadOnly] ref Translation pos, ref Rotation rot)
 		{
-			float3 heading = playerPosition - pos.Value;
+			int minIdx = 0;
+			var dir = playerPositions[0] - pos.Value;
+			var minDist = math.dot(dir, dir);
+			for (int i=1; i < playerPositions.Length ; ++i)
+			{
+				var dirPlayer = playerPositions[i] - pos.Value;
+				var dist = math.dot(dirPlayer, dirPlayer);
+				if (dist < minDist)
+				{
+					minDist = dist;
+					minIdx = i;
+				}
+			}
+
+			float3 heading = playerPositions[minIdx] - pos.Value;
 			heading.y = 0f;
 			rot.Value = quaternion.LookRotation(heading, math.up());
 		}
@@ -25,12 +40,12 @@ public class TurnTowardsPlayerSystem : JobComponentSystem
 
 	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
-		if (Settings.IsPlayerDead())
+		if (!Settings.AnyPlayerAlive())
 			return inputDeps;
 
 		var job = new TurnJob
 		{
-			playerPosition = Settings.PlayerPosition
+			playerPositions = Settings.PlayerPositions
 		};
 
 		return job.Schedule(this, inputDeps);

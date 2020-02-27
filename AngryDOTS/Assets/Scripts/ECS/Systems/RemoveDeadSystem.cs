@@ -6,20 +6,20 @@ public class RemoveDeadSystem : ComponentSystem
 {
 	protected override void OnUpdate()
 	{
-		Entities.ForEach((Entity entity, ref Health health, ref Translation pos) =>
+		Entities.ForEach((Entity entity, ref Health health, ref Translation pos, ref PlayerTag tag) =>
 		{
 			if (health.Value <= 0)
 			{
-				if (EntityManager.HasComponent(entity, typeof(PlayerTag)))
-				{
-					Settings.PlayerDied();
-				}
+				Settings.PlayerDied(tag.playerIdx);
+			}
+		});
 
-				else if (EntityManager.HasComponent(entity, typeof(EnemyTag)))
-				{
-					PostUpdateCommands.DestroyEntity(entity);
-					BulletImpactPool.PlayBulletImpact(pos.Value);
-				}
+		Entities.ForEach((Entity entity, ref Health health, ref Translation pos, ref EnemyTag tag) =>
+		{
+			if (health.Value <= 0)
+			{
+				PostUpdateCommands.DestroyEntity(entity);
+				BulletImpactPool.PlayBulletImpact(pos.Value);
 			}
 		});
 	}

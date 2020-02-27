@@ -15,6 +15,9 @@ public class PlayerMovementAndLook : MonoBehaviour
 	[Header("Animation")]
 	public Animator playerAnimator;
 
+	[Header("Player Identity")]
+	public int idx;
+
 	Rigidbody playerRigidbody;
 	bool isDead;
 
@@ -98,7 +101,7 @@ public class PlayerMovementAndLook : MonoBehaviour
 
 		if(playerHealth <= 0)
 		{
-			Settings.PlayerDied();
+			Settings.PlayerDied(idx);
 		}
 	}
 

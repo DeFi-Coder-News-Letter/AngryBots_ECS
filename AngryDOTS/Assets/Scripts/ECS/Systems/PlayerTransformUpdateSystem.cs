@@ -6,12 +6,12 @@ public class PlayerTransformUpdateSystem : ComponentSystem
 {
 	protected override void OnUpdate()
 	{
-		if (Settings.IsPlayerDead())
+		if (!Settings.AnyPlayerAlive())
 			return;
 
-		Entities.WithAll<PlayerTag>().ForEach((ref Translation pos) =>
+		Entities.WithAll<PlayerTag>().ForEach((ref Translation pos, ref PlayerTag tag) =>
 		{
-			pos = new Translation { Value = Settings.PlayerPosition };
+			pos = new Translation { Value = Settings.GetPlayerPosition(tag.playerIdx) };
 		});
 	}
 }
