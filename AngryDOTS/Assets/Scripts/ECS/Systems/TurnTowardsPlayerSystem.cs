@@ -18,13 +18,18 @@ public class TurnTowardsPlayerSystem : JobComponentSystem
 
 		public void Execute([ReadOnly] ref Translation pos, ref Rotation rot)
 		{
+			if (playerPositions.Length == 0)
+			{
+				return;
+			}
+
 			int minIdx = 0;
 			var dir = playerPositions[0] - pos.Value;
 			var minDist = math.dot(dir, dir);
-			for (int i=1; i < playerPositions.Length ; ++i)
+			for (int i=1; i < playerPositions.Length; ++i)
 			{
-				var dirPlayer = playerPositions[i] - pos.Value;
-				var dist = math.dot(dirPlayer, dirPlayer);
+				dir = playerPositions[i] - pos.Value;
+				var dist = math.dot(dir, dir);
 				if (dist < minDist)
 				{
 					minDist = dist;

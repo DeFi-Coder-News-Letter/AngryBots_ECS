@@ -23,22 +23,23 @@ public class EnemyBehaviour : MonoBehaviour, IConvertGameObjectToEntity
 	{
 		if (Settings.AnyPlayerAlive())
 		{
-			var playerPositions = Settings.PlayerPositions;
-			var minDirPlayer = playerPositions[0];
-			var minDist = 0.0f;
 			float3 pos = transform.position;
+			var playerPositions = Settings.PlayerPositions;
+			int minIdx = 0;
+			var dir = playerPositions[0] - pos;
+			var minDist = math.dot(dir, dir);
 			for (int i = 1; i < playerPositions.Length; ++i)
 			{
-				var dirPlayer = playerPositions[i] - pos;
-				var dist = math.dot(dirPlayer, dirPlayer);
+				dir = playerPositions[i] - pos;
+				var dist = math.dot(dir, dir);
 				if (dist < minDist)
 				{
 					minDist = dist;
-					minDirPlayer = dirPlayer;
+					minIdx = i;
 				}
 			}
 
-			Vector3 heading = minDirPlayer;
+			Vector3 heading = playerPositions[minIdx] - pos;
 			heading.y = 0f;
 			transform.rotation = Quaternion.LookRotation(heading);
 		}

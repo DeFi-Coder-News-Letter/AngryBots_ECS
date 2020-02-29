@@ -8,7 +8,8 @@ public class Settings : MonoBehaviour
 	static Settings instance;
 
 	[Header("Game Object References")]
-	public List<Transform> players;
+	public List<PlayerMovementAndLook> playersComp ;
+	private List<Transform> players = new List<Transform>();
 
 	[Header("Collision Info")]
 	public float playerCollisionRadius = .5f;
@@ -30,14 +31,13 @@ public class Settings : MonoBehaviour
 
 	public static NativeArray<float3> PlayerPositions
 	{
-		get 
+		get
 		{
 			NativeArray<float3> positions = new NativeArray<float3>(GetPlayerAliveCount(), Allocator.TempJob);
 			int arrayIdx = 0;
 			for (int i = 0; i < instance.players.Count; ++i)
 			{
-				bool alive = instance.players[i] != null;
-				//positions[arrayIdx] = alive ? (float3)instance.players[i].position : new float3(0.0f, 0.0f, 0.0f);
+				bool alive = !instance.playersComp[i].IsDead;
 				if (alive)
 				{
 					positions[arrayIdx] = (float3)instance.players[i].position;
@@ -54,27 +54,22 @@ public class Settings : MonoBehaviour
 			Destroy(gameObject);
 		else
 			instance = this;
+
+		players.Capacity = playersComp.Count;
+		for (int i=0; i < playersComp.Count; ++i)
+		{
+			players.Add(playersComp[i].transform);
+		}
 	}
 
 	public static Vector3 GetPlayerPosition(int idx)
 	{
-		return (instance.players[idx] != null) ? instance.players[idx].position : new Vector3(0.0f, 0.0f, 0.0f);
+		return instance.players[idx].position;
 	}
 
 	public static Vector3 GetPositionAroundPlayer(int idx, float radius)
 	{
-		Vector3 playerPos = Vector3.zero;
-		int alive = 0;
-		for (int i = 0; i < instance.players.Count; ++i)
-		{
-			if (instance.players[idx] != null)
-				++alive;
-			if (alive == idx)
-			{
-				playerPos = instance.players[i].position;
-			}
-		}
-		//Vector3 playerPos = instance.players[idx].position;
+		Vector3 playerPos = instance.players[idx].position;
 
 		float angle = UnityEngine.Random.Range(0f, 2 * Mathf.PI);
 		float s = Mathf.Sin(angle);
@@ -85,25 +80,25 @@ public class Settings : MonoBehaviour
 
 	public static void PlayerDied(int idx)
 	{
-		if (instance.players[idx] == null)
+		if (instance.playersComp[idx].IsDead)
 			return;
 
-		PlayerMovementAndLook playerMove = instance.players[idx].GetComponent<PlayerMovementAndLook>();
+		PlayerMovementAndLook playerMove = instance.playersComp[idx];
 		playerMove.PlayerDied();
 
-		instance.players[idx] = null;
+		//instance.players[idx] = null;
 	}
 
 	public static bool IsPlayerDead(int idx)
 	{
-		return instance.players[idx] == null;
+		return instance.playersComp[idx].IsDead;
 	}
 
 	public static bool AnyPlayerAlive()
 	{
 		for (int i=0; i < instance.players.Count; ++i)
 		{
-			if (instance.players[i] != null)
+			if (!instance.playersComp[i].IsDead)
 			{
 				return true;
 			}
@@ -116,7 +111,7 @@ public class Settings : MonoBehaviour
 		int count = 0;
 		for (int i = 0; i < instance.players.Count; ++i)
 		{
-			if (instance.players[i] != null)
+			if (!instance.playersComp[i].IsDead)
 			{
 				++count;
 			}

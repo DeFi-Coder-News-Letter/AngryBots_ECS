@@ -19,7 +19,13 @@ public class PlayerMovementAndLook : MonoBehaviour
 	public int idx;
 
 	Rigidbody playerRigidbody;
-	bool isDead;
+
+	public bool IsDead 
+	{
+		get{ return isDead;}
+	}
+
+	private bool isDead;
 
 	void Awake()
 	{
