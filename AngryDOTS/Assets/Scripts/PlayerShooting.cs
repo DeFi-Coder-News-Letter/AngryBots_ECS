@@ -18,6 +18,8 @@ public class PlayerShooting : MonoBehaviour
 	[Header("Bullets")]
 	public GameObject bulletPrefab;
 
+	private PlayerMovementAndLook playerComp;
+
 	float timer;
 
 	EntityManager manager;
@@ -26,6 +28,7 @@ public class PlayerShooting : MonoBehaviour
 
 	void Start()
 	{
+		playerComp = GetComponent<PlayerMovementAndLook>();
 		if (useECS)
 		{
 			manager = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -38,7 +41,7 @@ public class PlayerShooting : MonoBehaviour
 	{
 		timer += Time.deltaTime;
 
-		if (Input.GetButton("Fire1") && timer >= fireRate)
+		if (Input.GetButton("Fire1") && timer >= fireRate && !playerComp.IsDead)
 		{
 			Vector3 rotation = gunBarrel.rotation.eulerAngles;
 			rotation.x = 0f;
