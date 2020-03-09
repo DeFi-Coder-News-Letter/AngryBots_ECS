@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
+using Unity.Entities;
 using UnityEngine;
 
 public class Settings : MonoBehaviour
@@ -16,6 +17,20 @@ public class Settings : MonoBehaviour
 	public static float PlayerCollisionRadius
 	{
 		get { return instance.playerCollisionRadius; }
+	}
+
+	[Header("Bullets")]
+	public GameObject bulletPrefab;
+	private Entity bulletEntityPrefab;
+	public static Entity BulletEntityPrefab
+	{
+		get { return instance.bulletEntityPrefab; }
+	}
+
+	private int bulletSpreadAmount = 5;
+	public static int BulletSpreadAmount
+	{
+		get { return instance.bulletSpreadAmount; }
 	}
 
 	public float enemyCollisionRadius = .3f;
@@ -60,6 +75,12 @@ public class Settings : MonoBehaviour
 		{
 			players.Add(playersComp[i].transform);
 		}
+	}
+
+	void Start()
+	{
+		var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
+		bulletEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(bulletPrefab, settings);
 	}
 
 	public static Vector3 GetPlayerPosition(int idx)

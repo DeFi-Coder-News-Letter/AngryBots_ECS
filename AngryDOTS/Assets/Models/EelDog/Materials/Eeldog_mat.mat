@@ -5,7 +5,8 @@ Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: Eeldog_mat
   m_Shader: {fileID: 4800000, guid: f721c8ca1c893a54a8b65b0f8f0ed1bb, type: 3}
   m_ShaderKeywords: 

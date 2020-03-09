@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 54024267654260008}
   - component: {fileID: 3283379122428695263}
   - component: {fileID: 8455968328420558532}
+  - component: {fileID: 7589332622937621629}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Bullet
@@ -101,6 +102,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -112,6 +114,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -124,3 +127,143 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &7589332622937621629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1218724716591446}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabId: c4b4b81382c254a999d09f9375fbe2c7
+  DefaultClientInstantiationType: 0
+  RootPath: /Scripts/Generated
+  SnapshotDataPath: BulletSnapshotData.cs
+  UpdateSystemPath: BulletGhostUpdateSystem.cs
+  SerializerPath: BulletGhostSerializer.cs
+  Importance: 2
+  PredictingPlayerNetworkId: 
+  Components:
+  - name: MoveForward
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: MoveSpeed
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: TimeToLive
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Physics.PhysicsCollider
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Physics.PhysicsDamping
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Physics.PhysicsGravityFactor
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Physics.PhysicsMass
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Physics.PhysicsVelocity
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Rendering.PerInstanceCullingTag
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Rendering.RenderBounds
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Rendering.RenderMesh
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.LocalToWorld
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.Rotation
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: Value
+      quantization: 1000
+      interpolate: 1
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.Translation
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: Value
+      quantization: 100
+      interpolate: 1
+    manualFieldList: 0
+    entityIndex: 0
+  doNotStrip: 0

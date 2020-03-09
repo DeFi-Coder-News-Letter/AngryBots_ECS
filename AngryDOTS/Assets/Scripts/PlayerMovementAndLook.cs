@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
-public class PlayerMovementAndLook : MonoBehaviour
+public class PlayerMovementAndLook : MonoBehaviour, IConvertGameObjectToEntity
 {
 	[Header("Camera")]
 	public Camera mainCamera;
@@ -121,5 +124,16 @@ public class PlayerMovementAndLook : MonoBehaviour
 		playerAnimator.SetTrigger("Died");
 		playerRigidbody.isKinematic = true;
 		GetComponent<Collider>().enabled = false;
+	}
+
+	public void Convert(Entity entity, EntityManager manager, GameObjectConversionSystem conversionSystem)
+	{
+		manager.AddComponent(entity, typeof(Translation));
+
+		Rotation rotation = new Rotation { Value = quaternion.identity };
+		manager.AddComponentData(entity, rotation);
+
+		MoveSpeed moveSpeed = new MoveSpeed { Value = speed };
+		manager.AddComponentData(entity, moveSpeed);
 	}
 }

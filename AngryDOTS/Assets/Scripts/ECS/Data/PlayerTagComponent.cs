@@ -5,4 +5,5 @@ using Unity.Entities;
 public struct PlayerTag : IComponentData 
 {
     public int playerIdx;
+    public int playerId;
 }
