@@ -135,5 +135,10 @@ public class PlayerMovementAndLook : MonoBehaviour, IConvertGameObjectToEntity
 
 		MoveSpeed moveSpeed = new MoveSpeed { Value = speed };
 		manager.AddComponentData(entity, moveSpeed);
+
+		//GameObject track = new GameObject();
+		//CameraTrack cameraTrack = new CameraTrack { Value = track };
+		//manager.AddSharedComponentData(entity, cameraTrack);
+		//manager.AddComponentData(entity, cameraTrack);
 	}
 }

@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Mathematics;
+using static Unity.Mathematics.math;
 using Unity.Entities;
 using UnityEngine;
+using Cinemachine;
 
 public class Settings : MonoBehaviour
 {
@@ -31,6 +33,38 @@ public class Settings : MonoBehaviour
 	public static int BulletSpreadAmount
 	{
 		get { return instance.bulletSpreadAmount; }
+	}
+
+	[Header("Camera")]
+	public CinemachineVirtualCamera camera;
+	public static CinemachineVirtualCamera Camera
+	{
+		get { return instance.camera; }
+	}
+
+	[Header("Enemy Spawning")]
+	public bool spawnEnemies = true;
+	public static bool SpawnEnemies
+	{
+		get { return instance.spawnEnemies; }
+	}
+
+	[Range(.1f, 2f)] public float spawnInterval = 1.0f;
+	public static float SpawnInterval
+	{
+		get { return instance.spawnsPerInterval; }
+	}
+
+	[Range(1, 100)] public int spawnsPerInterval = 1;
+	public static int SpawnsPerInterval
+	{
+		get { return instance.spawnsPerInterval; }
+	}
+
+	public float enemySpawnRadius = 10.0f;
+	public static float EnemySpawnRadius
+	{
+		get { return instance.enemySpawnRadius; }
 	}
 
 	public float enemyCollisionRadius = .3f;
@@ -77,6 +111,13 @@ public class Settings : MonoBehaviour
 		}
 	}
 
+	private Dictionary<int, float3> playerPosition = new Dictionary<int, float3>();
+
+	public static void SetPlayerPosition(int playerId, ref float3 position)
+	{
+		instance.playerPosition[playerId] = position;
+	}
+
 	void Start()
 	{
 		var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
@@ -88,15 +129,21 @@ public class Settings : MonoBehaviour
 		return instance.players[idx].position;
 	}
 
-	public static Vector3 GetPositionAroundPlayer(int idx, float radius)
+	public static float3 GetPositionAroundPlayer(int idx, float radius)
 	{
-		Vector3 playerPos = instance.players[idx].position;
+		//Vector3 playerPos = instance.players[idx].position;
+		float3 playerPos = instance.playerPosition[idx + 1];
 
-		float angle = UnityEngine.Random.Range(0f, 2 * Mathf.PI);
-		float s = Mathf.Sin(angle);
-		float c = Mathf.Cos(angle);
-		
-		return new Vector3(c * radius, 1.1f, s * radius) + playerPos;
+		//float angle = UnityEngine.Random.Range(0f, 2 * Mathf.PI);
+		Unity.Mathematics.Random rnd = default(Unity.Mathematics.Random);
+		rnd.InitState();
+		float angle = rnd.NextFloat(0f, 2 * Unity.Mathematics.math.PI);
+		//float s = Mathf.Sin(angle);
+		float s = Unity.Mathematics.math.sin(angle);
+		float c = Unity.Mathematics.math.cos(angle);
+
+		//return new Vector3(c * radius, 1.1f, s * radius) + playerPos;
+		return new float3(c * radius, 1.1f, s * radius) + playerPos;
 	}
 
 	public static void PlayerDied(int idx)
@@ -117,26 +164,28 @@ public class Settings : MonoBehaviour
 
 	public static bool AnyPlayerAlive()
 	{
-		for (int i=0; i < instance.players.Count; ++i)
-		{
-			if (!instance.playersComp[i].IsDead)
-			{
-				return true;
-			}
-		}
-		return false;
+		return instance.playerPosition.Count > 0;
+		//for (int i=0; i < instance.players.Count; ++i)
+		//{
+		//	if (!instance.playersComp[i].IsDead)
+		//	{
+		//		return true;
+		//	}
+		//}
+		//return false;
 	}
 
 	public static int GetPlayerAliveCount()
 	{
-		int count = 0;
-		for (int i = 0; i < instance.players.Count; ++i)
-		{
-			if (!instance.playersComp[i].IsDead)
-			{
-				++count;
-			}
-		}
-		return count;
+		return instance.playerPosition.Count;
+		//int count = 0;
+		//for (int i = 0; i < instance.players.Count; ++i)
+		//{
+		//	if (!instance.playersComp[i].IsDead)
+		//	{
+		//		++count;
+		//	}
+		//}
+		//return count;
 	}
 }

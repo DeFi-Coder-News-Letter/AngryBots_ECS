@@ -77,19 +77,27 @@ public class GoInGameServerSystem : ComponentSystem
         Entities.WithNone<SendRpcCommandRequestComponent>().ForEach((Entity reqEnt, ref GoInGameRequest req, ref ReceiveRpcCommandRequestComponent reqSrc) =>
         {
             PostUpdateCommands.AddComponent<NetworkStreamInGame>(reqSrc.SourceConnection);
-            UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value));
+            int id = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value;
+            UnityEngine.Debug.Log(String.Format("Server setting connection {0} to in game", id));
 #if true
             var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
             var ghostId = AngryDOTSGhostSerializerCollection.FindGhostType<PlayerLightSnapshotData>();
             var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
             var player = EntityManager.Instantiate(prefab);
-            EntityManager.SetComponentData(player, new PlayerComponent { playerId = EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection).Value });
+            EntityManager.SetComponentData(player, new PlayerComponent { playerId = id });
 
             PostUpdateCommands.AddBuffer<PlayerInput>(player);
             PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });
 #endif
 
             PostUpdateCommands.DestroyEntity(reqEnt);
+
+            if (id == 1)
+            {
+                var spawner = EntityManager.CreateEntity();
+                EnemySpawnerComponent spawnerComp = new EnemySpawnerComponent { };
+                EntityManager.AddComponentData(spawner, spawnerComp);
+            }
         });
     }
 }

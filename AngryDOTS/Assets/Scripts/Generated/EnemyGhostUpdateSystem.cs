@@ -9,7 +9,7 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [UpdateInGroup(typeof(GhostUpdateSystemGroup))]
-public class BulletGhostUpdateSystem : JobComponentSystem
+public class EnemyGhostUpdateSystem : JobComponentSystem
 {
     [BurstCompile]
     struct UpdateInterpolatedJob : IJobChunk
@@ -22,7 +22,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
         public int ThreadIndex;
 #pragma warning restore 649
 #endif
-        [ReadOnly] public ArchetypeChunkBufferType<BulletSnapshotData> ghostSnapshotDataType;
+        [ReadOnly] public ArchetypeChunkBufferType<EnemySnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<Rotation> ghostRotationType;
         public ArchetypeChunkComponentType<Translation> ghostTranslationType;
@@ -55,7 +55,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
                         minMaxSnapshotTick[minMaxOffset + 1] = latestTick;
                 }
 #endif
-                BulletSnapshotData snapshotData;
+                EnemySnapshotData snapshotData;
                 snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData);
 
                 var ghostRotation = ghostRotationArray[entityIndex];
@@ -79,7 +79,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
         public int ThreadIndex;
 #pragma warning restore 649
         [NativeDisableParallelForRestriction] public NativeArray<uint> minPredictedTick;
-        [ReadOnly] public ArchetypeChunkBufferType<BulletSnapshotData> ghostSnapshotDataType;
+        [ReadOnly] public ArchetypeChunkBufferType<EnemySnapshotData> ghostSnapshotDataType;
         [ReadOnly] public ArchetypeChunkEntityType ghostEntityType;
         public ArchetypeChunkComponentType<PredictedGhostComponent> predictedGhostComponentType;
         public ArchetypeChunkComponentType<Rotation> ghostRotationType;
@@ -113,7 +113,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
                         minMaxSnapshotTick[minMaxOffset + 1] = latestTick;
                 }
 #endif
-                BulletSnapshotData snapshotData;
+                EnemySnapshotData snapshotData;
                 snapshot.GetDataAtTick(targetTick, out snapshotData);
 
                 var predictedData = predictedGhostComponentArray[entityIndex];
@@ -159,7 +159,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
         m_interpolatedQuery = GetEntityQuery(new EntityQueryDesc
         {
             All = new []{
-                ComponentType.ReadWrite<BulletSnapshotData>(),
+                ComponentType.ReadWrite<EnemySnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadWrite<Rotation>(),
                 ComponentType.ReadWrite<Translation>(),
@@ -169,14 +169,14 @@ public class BulletGhostUpdateSystem : JobComponentSystem
         m_predictedQuery = GetEntityQuery(new EntityQueryDesc
         {
             All = new []{
-                ComponentType.ReadOnly<BulletSnapshotData>(),
+                ComponentType.ReadOnly<EnemySnapshotData>(),
                 ComponentType.ReadOnly<GhostComponent>(),
                 ComponentType.ReadOnly<PredictedGhostComponent>(),
                 ComponentType.ReadWrite<Rotation>(),
                 ComponentType.ReadWrite<Translation>(),
             }
         });
-        RequireForUpdate(GetEntityQuery(ComponentType.ReadWrite<BulletSnapshotData>(),
+        RequireForUpdate(GetEntityQuery(ComponentType.ReadWrite<EnemySnapshotData>(),
             ComponentType.ReadOnly<GhostComponent>()));
     }
     protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -190,7 +190,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
                 minMaxSnapshotTick = m_ghostMinMaxSnapshotTick,
 #endif
                 minPredictedTick = m_GhostPredictionSystemGroup.OldestPredictedTick,
-                ghostSnapshotDataType = GetArchetypeChunkBufferType<BulletSnapshotData>(true),
+                ghostSnapshotDataType = GetArchetypeChunkBufferType<EnemySnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
@@ -213,7 +213,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 minMaxSnapshotTick = m_ghostMinMaxSnapshotTick,
 #endif
-                ghostSnapshotDataType = GetArchetypeChunkBufferType<BulletSnapshotData>(true),
+                ghostSnapshotDataType = GetArchetypeChunkBufferType<EnemySnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
@@ -225,7 +225,7 @@ public class BulletGhostUpdateSystem : JobComponentSystem
         return inputDeps;
     }
 }
-public partial class BulletGhostSpawnSystem : DefaultGhostSpawnSystem<BulletSnapshotData>
+public partial class EnemyGhostSpawnSystem : DefaultGhostSpawnSystem<EnemySnapshotData>
 {
     struct SetPredictedDefault : IJobParallelFor
     {
@@ -235,7 +235,7 @@ public partial class BulletGhostSpawnSystem : DefaultGhostSpawnSystem<BulletSnap
             predictionMask[index] = 1;
         }
     }
-    protected override JobHandle SetPredictedGhostDefaults(NativeArray<BulletSnapshotData> snapshots, NativeArray<int> predictionMask, JobHandle inputDeps)
+    protected override JobHandle SetPredictedGhostDefaults(NativeArray<EnemySnapshotData> snapshots, NativeArray<int> predictionMask, JobHandle inputDeps)
     {
         var job = new SetPredictedDefault
         {

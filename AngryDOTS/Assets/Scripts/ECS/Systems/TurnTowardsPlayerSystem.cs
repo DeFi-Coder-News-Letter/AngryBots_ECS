@@ -1,23 +1,29 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
+[UpdateInGroup(typeof(GhostPredictionSystemGroup))]
 [UpdateBefore(typeof(MoveForwardSystem))]
 public class TurnTowardsPlayerSystem : JobComponentSystem
 {
 	[BurstCompile]
 	[RequireComponentTag(typeof(EnemyTag))]
-	struct TurnJob : IJobForEach<Translation, Rotation>
+	struct TurnJob : IJobForEach<Translation, Rotation, PredictedGhostComponent>
 	{
 		[DeallocateOnJobCompletion]
 		[ReadOnly] public NativeArray<float3> playerPositions;
+		[ReadOnly] public uint tick;
 
-		public void Execute([ReadOnly] ref Translation pos, ref Rotation rot)
+		public void Execute([ReadOnly] ref Translation pos, ref Rotation rot, [ReadOnly] ref PredictedGhostComponent prediction)
 		{
+			if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+				return;
+
 			if (playerPositions.Length == 0)
 			{
 				return;

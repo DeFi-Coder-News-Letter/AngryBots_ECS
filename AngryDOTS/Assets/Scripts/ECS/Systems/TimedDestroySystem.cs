@@ -1,9 +1,11 @@
 ﻿using Unity.Entities;
+using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Transforms;
 using UnityEngine;
 
 
+[UpdateInGroup(typeof(ServerSimulationSystemGroup))]
 [UpdateAfter(typeof(MoveForwardSystem))]
 public class TimedDestroySystem : JobComponentSystem
 {

@@ -13,11 +13,12 @@ public struct AngryDOTSGhostDeserializerCollection : IGhostDeserializerCollectio
         {
             "PlayerLightGhostSerializer",
             "BulletGhostSerializer",
+            "EnemyGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 2;
+    public int Length => 3;
 #endif
     public void Initialize(World world)
     {
@@ -29,12 +30,17 @@ public struct AngryDOTSGhostDeserializerCollection : IGhostDeserializerCollectio
         m_BulletSnapshotDataNewGhostIds = curBulletGhostSpawnSystem.NewGhostIds;
         m_BulletSnapshotDataNewGhosts = curBulletGhostSpawnSystem.NewGhosts;
         curBulletGhostSpawnSystem.GhostType = 1;
+        var curEnemyGhostSpawnSystem = world.GetOrCreateSystem<EnemyGhostSpawnSystem>();
+        m_EnemySnapshotDataNewGhostIds = curEnemyGhostSpawnSystem.NewGhostIds;
+        m_EnemySnapshotDataNewGhosts = curEnemyGhostSpawnSystem.NewGhosts;
+        curEnemyGhostSpawnSystem.GhostType = 2;
     }
 
     public void BeginDeserialize(JobComponentSystem system)
     {
         m_PlayerLightSnapshotDataFromEntity = system.GetBufferFromEntity<PlayerLightSnapshotData>();
         m_BulletSnapshotDataFromEntity = system.GetBufferFromEntity<BulletSnapshotData>();
+        m_EnemySnapshotDataFromEntity = system.GetBufferFromEntity<EnemySnapshotData>();
     }
     public bool Deserialize(int serializer, Entity entity, uint snapshot, uint baseline, uint baseline2, uint baseline3,
         ref DataStreamReader reader, NetworkCompressionModel compressionModel)
@@ -46,6 +52,9 @@ public struct AngryDOTSGhostDeserializerCollection : IGhostDeserializerCollectio
                 baseline3, ref reader, compressionModel);
             case 1:
                 return GhostReceiveSystem<AngryDOTSGhostDeserializerCollection>.InvokeDeserialize(m_BulletSnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
+                baseline3, ref reader, compressionModel);
+            case 2:
+                return GhostReceiveSystem<AngryDOTSGhostDeserializerCollection>.InvokeDeserialize(m_EnemySnapshotDataFromEntity, entity, snapshot, baseline, baseline2,
                 baseline3, ref reader, compressionModel);
             default:
                 throw new ArgumentException("Invalid serializer type");
@@ -64,6 +73,10 @@ public struct AngryDOTSGhostDeserializerCollection : IGhostDeserializerCollectio
                 m_BulletSnapshotDataNewGhostIds.Add(ghostId);
                 m_BulletSnapshotDataNewGhosts.Add(GhostReceiveSystem<AngryDOTSGhostDeserializerCollection>.InvokeSpawn<BulletSnapshotData>(snapshot, ref reader, compressionModel));
                 break;
+            case 2:
+                m_EnemySnapshotDataNewGhostIds.Add(ghostId);
+                m_EnemySnapshotDataNewGhosts.Add(GhostReceiveSystem<AngryDOTSGhostDeserializerCollection>.InvokeSpawn<EnemySnapshotData>(snapshot, ref reader, compressionModel));
+                break;
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
@@ -75,6 +88,9 @@ public struct AngryDOTSGhostDeserializerCollection : IGhostDeserializerCollectio
     private BufferFromEntity<BulletSnapshotData> m_BulletSnapshotDataFromEntity;
     private NativeList<int> m_BulletSnapshotDataNewGhostIds;
     private NativeList<BulletSnapshotData> m_BulletSnapshotDataNewGhosts;
+    private BufferFromEntity<EnemySnapshotData> m_EnemySnapshotDataFromEntity;
+    private NativeList<int> m_EnemySnapshotDataNewGhostIds;
+    private NativeList<EnemySnapshotData> m_EnemySnapshotDataNewGhosts;
 }
 public struct EnableAngryDOTSGhostReceiveSystemComponent : IComponentData
 {}

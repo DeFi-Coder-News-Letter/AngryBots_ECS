@@ -9,6 +9,33 @@ using Unity.Jobs;
 using UnityEngine;
 
 [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+public class MoveCameraSystem : ComponentSystem
+{
+    protected override void OnUpdate()
+    {
+        var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
+        var tick = group.PredictingTick;
+        var deltaTime = Time.DeltaTime;
+
+        //var query = EntityManager.CreateEntityQuery(typeof(NetworkIdComponent));
+        var networkId = GetSingleton<NetworkIdComponent>();
+        //EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection)
+
+        //Entities.ForEach((ref Translation trans, ref CameraTrack cameraTrack, ref PredictedGhostComponent prediction) =>
+        Entities.ForEach((ref Translation trans, ref PlayerComponent player, ref PredictedGhostComponent prediction) =>
+        {
+            if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+                return;
+
+            if (player.playerId == networkId.Value)
+            {
+                Settings.Camera.Follow.position = trans.Value;
+            }
+        });
+    }
+}
+
+[UpdateInGroup(typeof(GhostPredictionSystemGroup))]
 public class MovePlayerSystem : ComponentSystem
 {
     protected override void OnUpdate()
@@ -29,10 +56,11 @@ public class MovePlayerSystem : ComponentSystem
         EntityManager manager = World.DefaultGameObjectInjectionWorld.EntityManager; ;
         Entity bulletEntityPrefab = Settings.BulletEntityPrefab;
 
-        Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer, ref Translation trans, ref Rotation rot, ref MoveSpeed speed, ref PredictedGhostComponent prediction) =>
+        Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer, ref Translation trans, ref Rotation rot, ref MoveSpeed speed, ref PlayerComponent player, ref PredictedGhostComponent prediction) =>
         {
             if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
                 return;
+
             PlayerInput input;
             inputBuffer.GetDataAtTick(tick, out input);
 
@@ -52,10 +80,11 @@ public class MovePlayerSystem : ComponentSystem
 
             quaternion newRotation = Unity.Mathematics.quaternion.LookRotation(playerToMouse, up);
             rot.Value = newRotation;
+
+            Settings.SetPlayerPosition(player.playerId, ref trans.Value);
         });
     }
 }
-
 
 [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
 public class ShootPlayerSystem : ComponentSystem

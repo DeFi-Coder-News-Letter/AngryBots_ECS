@@ -13,11 +13,12 @@ public struct AngryDOTSGhostSerializerCollection : IGhostSerializerCollection
         {
             "PlayerLightGhostSerializer",
             "BulletGhostSerializer",
+            "EnemyGhostSerializer",
         };
         return arr;
     }
 
-    public int Length => 2;
+    public int Length => 3;
 #endif
     public static int FindGhostType<T>()
         where T : struct, ISnapshotData<T>
@@ -26,6 +27,8 @@ public struct AngryDOTSGhostSerializerCollection : IGhostSerializerCollection
             return 0;
         if (typeof(T) == typeof(BulletSnapshotData))
             return 1;
+        if (typeof(T) == typeof(EnemySnapshotData))
+            return 2;
         return -1;
     }
 
@@ -33,6 +36,7 @@ public struct AngryDOTSGhostSerializerCollection : IGhostSerializerCollection
     {
         m_PlayerLightGhostSerializer.BeginSerialize(system);
         m_BulletGhostSerializer.BeginSerialize(system);
+        m_EnemyGhostSerializer.BeginSerialize(system);
     }
 
     public int CalculateImportance(int serializer, ArchetypeChunk chunk)
@@ -43,6 +47,8 @@ public struct AngryDOTSGhostSerializerCollection : IGhostSerializerCollection
                 return m_PlayerLightGhostSerializer.CalculateImportance(chunk);
             case 1:
                 return m_BulletGhostSerializer.CalculateImportance(chunk);
+            case 2:
+                return m_EnemyGhostSerializer.CalculateImportance(chunk);
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -56,6 +62,8 @@ public struct AngryDOTSGhostSerializerCollection : IGhostSerializerCollection
                 return m_PlayerLightGhostSerializer.SnapshotSize;
             case 1:
                 return m_BulletGhostSerializer.SnapshotSize;
+            case 2:
+                return m_EnemyGhostSerializer.SnapshotSize;
         }
 
         throw new ArgumentException("Invalid serializer type");
@@ -73,12 +81,17 @@ public struct AngryDOTSGhostSerializerCollection : IGhostSerializerCollection
             {
                 return GhostSendSystem<AngryDOTSGhostSerializerCollection>.InvokeSerialize<BulletGhostSerializer, BulletSnapshotData>(m_BulletGhostSerializer, ref dataStream, data);
             }
+            case 2:
+            {
+                return GhostSendSystem<AngryDOTSGhostSerializerCollection>.InvokeSerialize<EnemyGhostSerializer, EnemySnapshotData>(m_EnemyGhostSerializer, ref dataStream, data);
+            }
             default:
                 throw new ArgumentException("Invalid serializer type");
         }
     }
     private PlayerLightGhostSerializer m_PlayerLightGhostSerializer;
     private BulletGhostSerializer m_BulletGhostSerializer;
+    private EnemyGhostSerializer m_EnemyGhostSerializer;
 }
 
 public struct EnableAngryDOTSGhostSendSystemComponent : IComponentData
