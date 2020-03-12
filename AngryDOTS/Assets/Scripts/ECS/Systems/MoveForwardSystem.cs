@@ -1,10 +1,9 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
+using Unity.NetCode;
 
 namespace Unity.Transforms
 {
@@ -21,7 +20,9 @@ namespace Unity.Transforms
 			public void Execute(ref Translation pos, [ReadOnly] ref Rotation rot, [ReadOnly] ref MoveSpeed speed, [ReadOnly] ref PredictedGhostComponent prediction)
 			{
 				if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+				{
 					return;
+				}
 
 				pos.Value = pos.Value + (dt * speed.Value * math.forward(rot.Value));
 			}
@@ -35,7 +36,7 @@ namespace Unity.Transforms
 
 			var moveForwardRotationJob = new MoveForwardRotation
 			{
-				dt = Time.DeltaTime,
+				dt = deltaTime,
 				tick = tick
 			};
 

@@ -1,7 +1,9 @@
 ﻿using Unity.Entities;
 using Unity.Transforms;
+using Unity.NetCode;
 
-[UpdateInGroup(typeof(InitializationSystemGroup))]
+[UpdateInGroup(typeof(ServerSimulationSystemGroup))]
+//[UpdateInGroup(typeof(InitializationSystemGroup))]
 public class RemoveDeadSystem : ComponentSystem
 {
 	protected override void OnUpdate()
@@ -10,7 +12,8 @@ public class RemoveDeadSystem : ComponentSystem
 		{
 			if (health.Value <= 0)
 			{
-				Settings.PlayerDied(tag.playerIdx);
+				//Settings.PlayerDied(tag.playerIdx);
+				PostUpdateCommands.DestroyEntity(entity);
 			}
 		});
 

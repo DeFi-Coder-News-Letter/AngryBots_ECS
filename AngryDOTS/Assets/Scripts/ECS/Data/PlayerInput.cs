@@ -1,8 +1,5 @@
-﻿using Unity.Entities;
-using Unity.NetCode;
+﻿using Unity.NetCode;
 using Unity.Networking.Transport;
-using Unity.Mathematics;
-using UnityEngine;
 
 public struct PlayerInput : ICommandData<PlayerInput>
 {

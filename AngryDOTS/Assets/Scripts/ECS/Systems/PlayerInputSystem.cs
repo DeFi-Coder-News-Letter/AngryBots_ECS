@@ -1,8 +1,4 @@
-﻿using Unity.Burst;
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Jobs;
-using Unity.Mathematics;
+﻿using Unity.Entities;
 using Unity.NetCode;
 using UnityEngine;
 
@@ -18,6 +14,12 @@ public class PlayerInputSystem : ComponentSystem
 
     protected override void OnUpdate()
     {
+        // Just send input for the current enabled client
+        if (!World.GetExistingSystem<ClientPresentationSystemGroup>().Enabled)
+        {
+            return;
+        }
+
         // Get the command target to know to which entity we are attached to
         var localInput = GetSingleton<CommandTargetComponent>().targetEntity;
         if (localInput == Entity.Null)// Do we know the target?

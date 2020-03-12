@@ -19,49 +19,49 @@ public class EnemyBehaviour : MonoBehaviour, IConvertGameObjectToEntity
 		rigidBody = GetComponent<Rigidbody>();
 	}
 
-	void Update()
-	{
-		if (Settings.AnyPlayerAlive())
-		{
-			float3 pos = transform.position;
-			var playerPositions = Settings.PlayerPositions;
-			int minIdx = 0;
-			var dir = playerPositions[0] - pos;
-			var minDist = math.dot(dir, dir);
-			for (int i = 1; i < playerPositions.Length; ++i)
-			{
-				dir = playerPositions[i] - pos;
-				var dist = math.dot(dir, dir);
-				if (dist < minDist)
-				{
-					minDist = dist;
-					minIdx = i;
-				}
-			}
+	//void Update()
+	//{
+	//	if (Settings.AnyPlayerAlive())
+	//	{
+	//		float3 pos = transform.position;
+	//		var playerPositions = Settings.PlayerPositions;
+	//		int minIdx = 0;
+	//		var dir = playerPositions[0] - pos;
+	//		var minDist = math.dot(dir, dir);
+	//		for (int i = 1; i < playerPositions.Length; ++i)
+	//		{
+	//			dir = playerPositions[i] - pos;
+	//			var dist = math.dot(dir, dir);
+	//			if (dist < minDist)
+	//			{
+	//				minDist = dist;
+	//				minIdx = i;
+	//			}
+	//		}
 
-			Vector3 heading = playerPositions[minIdx] - pos;
-			heading.y = 0f;
-			transform.rotation = Quaternion.LookRotation(heading);
-		}
+	//		Vector3 heading = playerPositions[minIdx] - pos;
+	//		heading.y = 0f;
+	//		transform.rotation = Quaternion.LookRotation(heading);
+	//	}
 
-		Vector3 movement = transform.forward * speed * Time.deltaTime;
-		rigidBody.MovePosition(transform.position + movement);
-	}
+	//	Vector3 movement = transform.forward * speed * Time.deltaTime;
+	//	rigidBody.MovePosition(transform.position + movement);
+	//}
 
 	//Enemy Collision
-	void OnTriggerEnter(Collider theCollider)
-	{
-		if (!theCollider.CompareTag("Bullet"))
-			return;
+	//void OnTriggerEnter(Collider theCollider)
+	//{
+	//	if (!theCollider.CompareTag("Bullet"))
+	//		return;
 
-		enemyHealth--;
+	//	enemyHealth--;
 
-		if(enemyHealth <= 0)
-		{
-			Destroy(gameObject);
-			BulletImpactPool.PlayBulletImpact(transform.position);
-		}
-	}
+	//	if(enemyHealth <= 0)
+	//	{
+	//		Destroy(gameObject);
+	//		BulletImpactPool.PlayBulletImpact(transform.position);
+	//	}
+	//}
 
 	public void Convert(Entity entity, EntityManager manager, GameObjectConversionSystem conversionSystem)
 	{

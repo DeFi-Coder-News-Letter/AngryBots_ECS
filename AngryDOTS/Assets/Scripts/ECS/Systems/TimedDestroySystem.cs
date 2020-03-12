@@ -2,11 +2,9 @@
 using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Transforms;
-using UnityEngine;
-
 
 [UpdateInGroup(typeof(ServerSimulationSystemGroup))]
-[UpdateAfter(typeof(MoveForwardSystem))]
+//[UpdateAfter(typeof(MoveForwardSystem))]
 public class TimedDestroySystem : JobComponentSystem
 {
 	EndSimulationEntityCommandBufferSystem buffer;
@@ -25,7 +23,9 @@ public class TimedDestroySystem : JobComponentSystem
 		{
 			timeToLive.Value -= dt;
 			if (timeToLive.Value <= 0f)
+			{
 				commands.DestroyEntity(jobIndex, entity);
+			}
 		}
 	}
 
@@ -43,4 +43,3 @@ public class TimedDestroySystem : JobComponentSystem
 		return handle;
 	}
 }
-

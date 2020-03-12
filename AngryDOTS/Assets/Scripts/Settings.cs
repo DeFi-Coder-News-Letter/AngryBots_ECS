@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Cinemachine;
+using System.Collections.Generic;
 using Unity.Collections;
-using Unity.Mathematics;
-using static Unity.Mathematics.math;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
-using Cinemachine;
 
 public class Settings : MonoBehaviour
 {
@@ -36,10 +35,10 @@ public class Settings : MonoBehaviour
 	}
 
 	[Header("Camera")]
-	public CinemachineVirtualCamera camera;
+	public CinemachineVirtualCamera virtualCamera;
 	public static CinemachineVirtualCamera Camera
 	{
-		get { return instance.camera; }
+		get { return instance.virtualCamera; }
 	}
 
 	[Header("Enemy Spawning")]
@@ -120,8 +119,8 @@ public class Settings : MonoBehaviour
 
 	void Start()
 	{
-		var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
-		bulletEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(bulletPrefab, settings);
+		//var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
+		//bulletEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(bulletPrefab, settings);
 	}
 
 	public static Vector3 GetPlayerPosition(int idx)
@@ -132,6 +131,10 @@ public class Settings : MonoBehaviour
 	public static float3 GetPositionAroundPlayer(int idx, float radius)
 	{
 		//Vector3 playerPos = instance.players[idx].position;
+		if (!instance.playerPosition.ContainsKey(idx + 1))
+		{
+			return float3.zero;
+		}
 		float3 playerPos = instance.playerPosition[idx + 1];
 
 		//float angle = UnityEngine.Random.Range(0f, 2 * Mathf.PI);

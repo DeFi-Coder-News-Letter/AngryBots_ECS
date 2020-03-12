@@ -18,16 +18,15 @@ public class EnemySpawner : MonoBehaviour
 	Entity enemyEntityPrefab;
 
 	float cooldown;
-
-
+	
 	void Start()
 	{
-		if (useECS)
-		{
-			manager = World.DefaultGameObjectInjectionWorld.EntityManager;
-			var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
-			enemyEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(enemyPrefab, settings);
-		}
+		//if (useECS)
+		//{
+		//	manager = World.DefaultGameObjectInjectionWorld.EntityManager;
+		//	var settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
+		//	enemyEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(enemyPrefab, settings);
+		//}
 	}
 
 	void Update()

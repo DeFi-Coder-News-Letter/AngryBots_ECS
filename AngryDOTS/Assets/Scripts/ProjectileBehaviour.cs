@@ -11,8 +11,7 @@ public class ProjectileBehaviour : MonoBehaviour, IConvertGameObjectToEntity
 	public float lifeTime = 2f;
 
 	Rigidbody projectileRigidbody;
-
-
+	
 	void Start()
 	{
 		projectileRigidbody = GetComponent<Rigidbody>();

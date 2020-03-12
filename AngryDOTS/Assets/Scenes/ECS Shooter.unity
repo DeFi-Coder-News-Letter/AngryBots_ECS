@@ -254,7 +254,7 @@ MonoBehaviour:
   playerCollisionRadius: 0.8
   bulletPrefab: {fileID: 1218724716591446, guid: c4b4b81382c254a999d09f9375fbe2c7,
     type: 3}
-  camera: {fileID: 220979868}
+  virtualCamera: {fileID: 220979868}
   spawnEnemies: 1
   spawnInterval: 1
   spawnsPerInterval: 1

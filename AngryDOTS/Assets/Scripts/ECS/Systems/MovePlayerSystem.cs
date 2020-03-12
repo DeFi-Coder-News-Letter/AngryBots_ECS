@@ -8,25 +8,15 @@ using static Unity.Mathematics.math;
 using Unity.Jobs;
 using UnityEngine;
 
-[UpdateInGroup(typeof(GhostPredictionSystemGroup))]
+[UpdateInGroup(typeof(ClientSimulationSystemGroup))]
 public class MoveCameraSystem : ComponentSystem
 {
     protected override void OnUpdate()
     {
-        var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
-        var tick = group.PredictingTick;
-        var deltaTime = Time.DeltaTime;
-
-        //var query = EntityManager.CreateEntityQuery(typeof(NetworkIdComponent));
         var networkId = GetSingleton<NetworkIdComponent>();
-        //EntityManager.GetComponentData<NetworkIdComponent>(reqSrc.SourceConnection)
 
-        //Entities.ForEach((ref Translation trans, ref CameraTrack cameraTrack, ref PredictedGhostComponent prediction) =>
-        Entities.ForEach((ref Translation trans, ref PlayerComponent player, ref PredictedGhostComponent prediction) =>
+        Entities.ForEach((ref Translation trans, ref PlayerComponent player) =>
         {
-            if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
-                return;
-
             if (player.playerId == networkId.Value)
             {
                 Settings.Camera.Follow.position = trans.Value;
@@ -44,44 +34,41 @@ public class MovePlayerSystem : ComponentSystem
         var tick = group.PredictingTick;
         var deltaTime = Time.DeltaTime;
 
+        // Get camera frame of reference for movement
         var camForward = Camera.main.transform.forward;
         camForward.y = 0.0f;
         camForward.Normalize();
         var camUp = Vector3.up;
         var camRight = Vector3.Cross(camUp, camForward);
-        float3 forward = float3(camForward.x, camForward.y, camForward.z);
+
+        float3 forward = float3(camForward);
         var up = float3(0.0f, 1.0f, 0.0f);
-        float3 right = float3(camRight.x, camRight.y, camRight.z);
+        float3 right = float3(camRight);
 
-        EntityManager manager = World.DefaultGameObjectInjectionWorld.EntityManager; ;
-        Entity bulletEntityPrefab = Settings.BulletEntityPrefab;
-
+        // Update each player entity movement
         Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer, ref Translation trans, ref Rotation rot, ref MoveSpeed speed, ref PlayerComponent player, ref PredictedGhostComponent prediction) =>
         {
             if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+            {
                 return;
+            }
 
             PlayerInput input;
             inputBuffer.GetDataAtTick(tick, out input);
 
-            //var forward = Unity.Mathematics.math.forward(rot.Value);
-            //var up = float3(0.0f, 1.0f, 0.0f);
-            //var right = Unity.Mathematics.math.cross(forward, up);
+            // Movement
             var movement = forward * input.vertical + right * input.horizontal;
             movement = movement * speed.Value * deltaTime;
-
             trans.Value += movement;
-            //trans.Value = movement;
 
+            // Look at
             var mousePos = float3(input.mousePosX, 0f, input.mousePosZ);
             float3 playerToMouse = mousePos - trans.Value;
             playerToMouse.y = 0f;
             playerToMouse = normalize(playerToMouse);
+            rot.Value = Unity.Mathematics.quaternion.LookRotation(playerToMouse, up);
 
-            quaternion newRotation = Unity.Mathematics.quaternion.LookRotation(playerToMouse, up);
-            rot.Value = newRotation;
-
-            Settings.SetPlayerPosition(player.playerId, ref trans.Value);
+            //Settings.SetPlayerPosition(player.playerId, ref trans.Value);
         });
     }
 }
@@ -94,14 +81,14 @@ public class ShootPlayerSystem : ComponentSystem
         var group = World.GetExistingSystem<ServerSimulationSystemGroup>();
         var tick = group.ServerTick;
 
+        // Update each player entity shooting
         Entities.ForEach((DynamicBuffer<PlayerInput> inputBuffer, ref Translation trans, ref Rotation rot) =>
         {
             PlayerInput input;
             inputBuffer.GetDataAtTick(tick, out input);
 
-            if (input.fire == 1)
+            if (input.fire == 1)// Did he fire?
             {
-                //Debug.Log(trans.Value);
                 var position = trans.Value;
                 position.y = 0.5f;
                 SpawnBulletECS(ref position, ref rot.Value);

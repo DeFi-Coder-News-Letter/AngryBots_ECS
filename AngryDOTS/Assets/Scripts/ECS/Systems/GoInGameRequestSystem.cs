@@ -1,8 +1,8 @@
 ﻿using System;
+using Unity.Burst;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
-using Unity.Burst;
 
 // The system that makes the RPC request component transfer
 public class GoInGameRequestSystem : RpcCommandRequestSystem<GoInGameRequest>

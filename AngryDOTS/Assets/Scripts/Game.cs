@@ -1,8 +1,6 @@
-﻿using System;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
-using Unity.Burst;
 using Unity.Rendering;
 
 // Control system updating in the default world

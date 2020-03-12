@@ -1,11 +1,11 @@
-﻿using Unity.Burst;
+﻿using System.Linq;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.NetCode;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.NetCode;
 using Unity.Transforms;
-using UnityEngine;
 
 [UpdateInGroup(typeof(GhostPredictionSystemGroup))]
 [UpdateBefore(typeof(MoveForwardSystem))]
@@ -16,50 +16,73 @@ public class TurnTowardsPlayerSystem : JobComponentSystem
 	struct TurnJob : IJobForEach<Translation, Rotation, PredictedGhostComponent>
 	{
 		[DeallocateOnJobCompletion]
-		[ReadOnly] public NativeArray<float3> playerPositions;
+		[ReadOnly] public NativeArray<Translation> playerPositions;
 		[ReadOnly] public uint tick;
 
 		public void Execute([ReadOnly] ref Translation pos, ref Rotation rot, [ReadOnly] ref PredictedGhostComponent prediction)
 		{
 			if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
-				return;
-
-			if (playerPositions.Length == 0)
 			{
 				return;
 			}
 
+			// We can avoid checking if playerPositions if empty because we did that before calling the jobs
 			int minIdx = 0;
-			var dir = playerPositions[0] - pos.Value;
-			var minDist = math.dot(dir, dir);
+			var dir = playerPositions[0].Value - pos.Value;
+			var minDistSqr = math.dot(dir, dir);
 			for (int i=1; i < playerPositions.Length; ++i)
 			{
-				dir = playerPositions[i] - pos.Value;
-				var dist = math.dot(dir, dir);
-				if (dist < minDist)
+				dir = playerPositions[i].Value - pos.Value;
+				var distSqr = math.dot(dir, dir);
+				if (distSqr < minDistSqr)
 				{
-					minDist = dist;
+					minDistSqr = distSqr;
 					minIdx = i;
 				}
 			}
 
-			float3 heading = playerPositions[minIdx] - pos.Value;
+			var heading = playerPositions[minIdx].Value - pos.Value;
 			heading.y = 0f;
 			rot.Value = quaternion.LookRotation(heading, math.up());
 		}
 	}
 
+	// Query to obtain all the players
+	EntityQuery playerGroup;
+
+	protected override void OnCreate()
+	{
+		playerGroup = GetEntityQuery(ComponentType.ReadOnly<Health>(), ComponentType.ReadOnly<Translation>(), ComponentType.ReadOnly<PlayerTag>());
+	}
+
 	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
-		if (!Settings.AnyPlayerAlive())
+		var healths = playerGroup.ToComponentDataArray<Health>(Allocator.TempJob);
+		bool anyPlayerAlive = healths.Any(h => h.Value > 0);
+		if (!anyPlayerAlive)
+		{
+			healths.Dispose();
 			return inputDeps;
+		}
+		healths.Dispose();
+
+		var players = playerGroup.ToComponentDataArray<Translation>(Allocator.TempJob);
+		if (players.Length == 0)// Should never happen since there were at least one Health, but just to be sure :)
+		{
+			players.Dispose();
+			return inputDeps;
+		}
+
+		var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
+		var tick = group.PredictingTick;
 
 		var job = new TurnJob
 		{
-			playerPositions = Settings.PlayerPositions
+			playerPositions = players,
+			tick = tick
 		};
+		// Note that players.Dispose() should not be called, because it will automatically be disposed after all the jobs finished running
 
 		return job.Schedule(this, inputDeps);
 	}
 }
-
