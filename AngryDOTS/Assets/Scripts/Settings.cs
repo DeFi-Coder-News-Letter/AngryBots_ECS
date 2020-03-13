@@ -71,30 +71,49 @@ public class Settings : MonoBehaviour
 	{
 		get { return instance.enemyCollisionRadius; }
 	}
-	
-	public static int PlayerCount
+
+	public static int PlayersAlive
 	{
-		get { return instance.players.Count; }
+		set;
+		get;
 	}
 
-	public static NativeArray<float3> PlayerPositions
+	public static int PlayersCount
 	{
-		get
-		{
-			NativeArray<float3> positions = new NativeArray<float3>(GetPlayerAliveCount(), Allocator.TempJob);
-			int arrayIdx = 0;
-			for (int i = 0; i < instance.players.Count; ++i)
-			{
-				bool alive = !instance.playersComp[i].IsDead;
-				if (alive)
-				{
-					positions[arrayIdx] = (float3)instance.players[i].position;
-					++arrayIdx;
-				}
-			}
-			return positions;
-		}
+		set;
+		get;
 	}
+
+	List<float3> playerPositions = new List<float3>();
+	public static List<float3> PlayerPositions
+	{
+		set { instance.playerPositions = value; }
+		get { return instance.playerPositions; }
+	}
+
+	//public static int PlayerCount
+	//{
+	//	get { return instance.players.Count; }
+	//}
+
+	//public static NativeArray<float3> PlayerPositions
+	//{
+	//	get
+	//	{
+	//		NativeArray<float3> positions = new NativeArray<float3>(GetPlayerAliveCount(), Allocator.TempJob);
+	//		int arrayIdx = 0;
+	//		for (int i = 0; i < instance.players.Count; ++i)
+	//		{
+	//			bool alive = !instance.playersComp[i].IsDead;
+	//			if (alive)
+	//			{
+	//				positions[arrayIdx] = (float3)instance.players[i].position;
+	//				++arrayIdx;
+	//			}
+	//		}
+	//		return positions;
+	//	}
+	//}
 
 	void Awake()
 	{

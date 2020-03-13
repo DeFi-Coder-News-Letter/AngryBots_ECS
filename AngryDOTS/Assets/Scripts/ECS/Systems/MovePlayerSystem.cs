@@ -11,6 +11,11 @@ using UnityEngine;
 [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
 public class MoveCameraSystem : ComponentSystem
 {
+    protected override void OnCreate()
+    {
+        RequireSingletonForUpdate<NetworkIdComponent>();
+    }
+
     protected override void OnUpdate()
     {
         var networkId = GetSingleton<NetworkIdComponent>();

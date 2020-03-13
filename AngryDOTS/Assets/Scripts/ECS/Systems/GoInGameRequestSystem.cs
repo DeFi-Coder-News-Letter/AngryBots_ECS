@@ -82,6 +82,7 @@ public class GoInGameServerSystem : ComponentSystem
 #if true
             var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
             var ghostId = AngryDOTSGhostSerializerCollection.FindGhostType<PlayerLightSnapshotData>();
+            //var ghostId = AngryDOTSGhostSerializerCollection.FindGhostType<PlayerSnapshotData>();
             var prefab = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
             var player = EntityManager.Instantiate(prefab);
             EntityManager.SetComponentData(player, new PlayerComponent { playerId = id });

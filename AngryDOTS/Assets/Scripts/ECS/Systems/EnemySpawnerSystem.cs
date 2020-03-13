@@ -65,8 +65,9 @@ public class EnemySpawnerSystem : ComponentSystem
     {
         for (int i = 0; i < Settings.SpawnsPerInterval; ++i)
         {
-            GameState state = GetSingleton<GameState>();
-            int playerIdx = rnd.NextInt(0, state.playersCount);
+            //GameState state = GetSingleton<GameState>();
+            //int playerIdx = rnd.NextInt(0, state.playersCount);
+            int playerIdx = rnd.NextInt(0, Settings.PlayersCount);
             //float3 pos = Settings.GetPositionAroundPlayer(playerIdx, Settings.EnemySpawnRadius);
             float3 pos = GetPositionAroundPlayer(playerIdx, Settings.EnemySpawnRadius);
 
@@ -76,8 +77,10 @@ public class EnemySpawnerSystem : ComponentSystem
 
     public float3 GetPositionAroundPlayer(int idx, float radius)
     {
-        GameState state = GetSingleton<GameState>();
-        float3 playerPos = state.playerPositions[idx];
+        //GameState state = GetSingleton<GameState>();
+        //float3 playerPos = state.playerPositions[idx];
+        //float3 playerPos = float3(state.playerPositionsX[idx], state.playerPositionsY[idx], state.playerPositionsZ[idx]);
+        float3 playerPos = Settings.PlayerPositions[idx];
 
         //float angle = UnityEngine.Random.Range(0f, 2 * Mathf.PI);
         Unity.Mathematics.Random rnd = default(Unity.Mathematics.Random);

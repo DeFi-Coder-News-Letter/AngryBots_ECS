@@ -18945,7 +18945,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1500293480320252}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.26, y: -1.01, z: -18.93}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4672117754167224}
@@ -19080,6 +19080,14 @@ MonoBehaviour:
   PredictingPlayerNetworkId: PlayerComponent.playerId
   Components:
   - name: Health
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: MoveSpeed
     interpolatedClient: 1
     predictedClient: 1
     server: 1

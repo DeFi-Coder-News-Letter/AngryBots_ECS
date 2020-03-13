@@ -227,20 +227,4 @@ public class BulletGhostUpdateSystem : JobComponentSystem
 }
 public partial class BulletGhostSpawnSystem : DefaultGhostSpawnSystem<BulletSnapshotData>
 {
-    struct SetPredictedDefault : IJobParallelFor
-    {
-        public NativeArray<int> predictionMask;
-        public void Execute(int index)
-        {
-            predictionMask[index] = 1;
-        }
-    }
-    protected override JobHandle SetPredictedGhostDefaults(NativeArray<BulletSnapshotData> snapshots, NativeArray<int> predictionMask, JobHandle inputDeps)
-    {
-        var job = new SetPredictedDefault
-        {
-            predictionMask = predictionMask,
-        };
-        return job.Schedule(predictionMask.Length, 8, inputDeps);
-    }
 }
