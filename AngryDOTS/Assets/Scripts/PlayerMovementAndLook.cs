@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Bolt;
+using UnityEngine;
 
-public class PlayerMovementAndLook : MonoBehaviour
+public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 {
 	[Header("Camera")]
 	public Camera mainCamera;
@@ -20,6 +21,7 @@ public class PlayerMovementAndLook : MonoBehaviour
 
 	Rigidbody playerRigidbody;
 
+	Vector3 moveVector = Vector3.zero; 
 	public bool IsDead 
 	{
 		get{ return isDead;}
@@ -32,7 +34,47 @@ public class PlayerMovementAndLook : MonoBehaviour
 		playerRigidbody = GetComponent<Rigidbody>();
 		mainCamera = Camera.main;
 	}
+	public override void Attached()
+	{
+		// This couples the Transform property of the State with the GameObject Transform
+		state.SetTransforms(state.Transform, transform);
+		state.SetAnimator(GetComponent<Animator>());
 
+		state.Animator.SetLayerWeight(0, 1);
+		state.Animator.SetLayerWeight(1, 1);
+	}
+
+	//Only runs in owner of the game object
+	public override void SimulateController()
+	{
+		IMainPlayerCommandInput input = MainPlayerCommand.Create();
+
+		input.MoveVector = moveVector;
+
+		entity.QueueInput(input);
+	}
+
+	public override void ExecuteCommand(Command command, bool resetState)
+	{
+		MainPlayerCommand cmd = command as MainPlayerCommand;
+		if(resetState)
+		{
+			transform.position = cmd.Result.Position;
+		}
+		else
+		{
+
+			MoveThePlayer(cmd.Input.MoveVector);
+			TurnThePlayer();
+
+			cmd.Result.Position = transform.position;
+
+			if(cmd.IsFirstExecution)
+			{
+				AnimateThePlayer(cmd.Input.MoveVector);
+			}
+		}
+	}
 	void FixedUpdate()
 	{
 		if (isDead)
@@ -53,11 +95,8 @@ public class PlayerMovementAndLook : MonoBehaviour
 
 		//Try not to use var for roadshows or learning code
 		Vector3 desiredDirection = cameraForward * inputDirection.z + cameraRight * inputDirection.x;
-		
-		//Why not just pass the vector instead of breaking it up only to remake it on the other side?
-		MoveThePlayer(desiredDirection);
-		TurnThePlayer();
-		AnimateThePlayer(desiredDirection);
+
+		moveVector = desiredDirection;
 		
 	}
 
