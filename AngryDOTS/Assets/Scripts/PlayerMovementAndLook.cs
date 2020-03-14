@@ -30,6 +30,7 @@ public class PlayerMovementAndLook : MonoBehaviour
 	void Awake()
 	{
 		playerRigidbody = GetComponent<Rigidbody>();
+		mainCamera = Camera.main;
 	}
 
 	void FixedUpdate()

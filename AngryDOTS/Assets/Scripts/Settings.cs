@@ -96,6 +96,11 @@ public class Settings : MonoBehaviour
 
 	public static bool AnyPlayerAlive()
 	{
+		if(instance == null)
+		{
+			return false;
+		}
+
 		for (int i=0; i < instance.players.Count; ++i)
 		{
 			if (!instance.playersComp[i].IsDead)
