@@ -19,7 +19,9 @@ public class BulletImpactPool : MonoBehaviour
 			return;
 		}
 		else
+		{
 			instance = this;
+		}
 
 		impactPool = new GameObject[impactPoolSize];
 		for (int i = 0; i < impactPoolSize; i++)
@@ -32,7 +34,9 @@ public class BulletImpactPool : MonoBehaviour
 	public static void PlayBulletImpact(Vector3 position)
 	{
 		if (++instance.currentPoolIndex >= instance.impactPool.Length)
+		{
 			instance.currentPoolIndex = 0;
+		}
 
 		instance.impactPool[instance.currentPoolIndex].SetActive(false);
 		instance.impactPool[instance.currentPoolIndex].transform.position = position;

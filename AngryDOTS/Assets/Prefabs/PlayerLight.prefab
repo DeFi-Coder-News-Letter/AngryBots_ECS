@@ -10,13 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4874788804663312}
   - component: {fileID: 136433486275610172}
-  - component: {fileID: 95790324078749254}
-  - component: {fileID: 114445215679820892}
-  - component: {fileID: 114167452494013206}
-  - component: {fileID: 1194508033}
   - component: {fileID: 1194508039}
   - component: {fileID: 7601351295213206150}
-  - component: {fileID: 7451463437367676064}
+  - component: {fileID: 2968803141422054876}
+  - component: {fileID: 2668590900435921697}
+  - component: {fileID: 7864077473498236384}
   - component: {fileID: 4551186410875954946}
   - component: {fileID: 3165027964904251862}
   m_Layer: 0
@@ -54,80 +52,6 @@ CapsuleCollider:
   m_Height: 2.19
   m_Direction: 1
   m_Center: {x: 0, y: 1.2, z: 0}
---- !u!95 &95790324078749254
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1500293480320252}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 8daa50189dd68ef46b8bd15dad17a34c, type: 3}
-  m_Controller: {fileID: 9100000, guid: 50de72e24196d5a4c9ee06afd595442e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &114445215679820892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1500293480320252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a27e225470804e68b4f152cf444bbd9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mainCamera: {fileID: 0}
-  speed: 4.5
-  whatIsGround:
-    serializedVersion: 2
-    m_Bits: 0
-  playerHealth: 1
-  playerAnimator: {fileID: 95790324078749254}
-  idx: 0
---- !u!114 &114167452494013206
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1500293480320252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14c6ec7c1cfc23b4692af64881e419f2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  useECS: 1
-  spreadShot: 1
-  gunBarrel: {fileID: 0}
-  shotVFX: {fileID: 0}
-  shotAudio: {fileID: 0}
-  fireRate: 0.01
-  spreadAmount: 20
-  bulletPrefab: {fileID: 1218724716591446, guid: c4b4b81382c254a999d09f9375fbe2c7,
-    type: 3}
---- !u!114 &1194508033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1500293480320252}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ec78bfd5b542f7458d0678151af24ef, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerIdxValue: 0
-  healthValue: 1
 --- !u!114 &1194508039
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,12 +79,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabId: b98c6e8b558b4bd4689db1d2c86ae535
   DefaultClientInstantiationType: 2
-  RootPath: /Scripts/Generated
+  RootPath: /Scripts/ECS/Generated
   SnapshotDataPath: PlayerSnapshotData.cs
   UpdateSystemPath: PlayerGhostUpdateSystem.cs
   SerializerPath: PlayerGhostSerializer.cs
   Importance: 1
-  PredictingPlayerNetworkId: PlayerComponent.playerId
+  PredictingPlayerNetworkId: Player.playerId
   Components:
   - name: Health
     interpolatedClient: 1
@@ -178,7 +102,7 @@ MonoBehaviour:
     fields: []
     manualFieldList: 0
     entityIndex: 0
-  - name: PlayerComponent
+  - name: Player
     interpolatedClient: 1
     predictedClient: 1
     server: 1
@@ -187,14 +111,6 @@ MonoBehaviour:
     - name: playerId
       quantization: -1
       interpolate: 0
-    manualFieldList: 0
-    entityIndex: 0
-  - name: PlayerTag
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields: []
     manualFieldList: 0
     entityIndex: 0
   - name: Unity.Physics.PhysicsCollider
@@ -260,7 +176,7 @@ MonoBehaviour:
     manualFieldList: 0
     entityIndex: 0
   doNotStrip: 0
---- !u!114 &7451463437367676064
+--- !u!114 &2968803141422054876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -269,10 +185,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 1500293480320252}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bc846630da84f6408ca7f98a966407b, type: 3}
+  m_Script: {fileID: 11500000, guid: 780acf6c729fa004f82c8ad4acbe0b35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playerId: 0
+--- !u!114 &2668590900435921697
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500293480320252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 765a96c3ea3480f43a9d960db2a2eeeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Value: 4.5
+--- !u!114 &7864077473498236384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1500293480320252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c2982657fa2b8743b4014921bcdd410, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Value: 1
 --- !u!23 &4551186410875954946
 MeshRenderer:
   m_ObjectHideFlags: 0
