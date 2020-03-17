@@ -34,7 +34,7 @@ public class GameSystem : ComponentSystem
     {
         public string type;
         public ushort port;
-        public uint ipv4;
+        public string ipv4;
     }
 
     protected override void OnUpdate()
@@ -58,10 +58,7 @@ public class GameSystem : ComponentSystem
                     ep.Port = config.client.port;
                 }else if (config.client.type == "RawConnection")
                 {
-                    RawNetworkAddress address = default(RawNetworkAddress);
-                    address.ipv4 = config.client.ipv4;
-                    address.port = config.client.port;
-                    ep.rawNetworkAddress = address;
+                    ep = NetworkEndPoint.Parse(config.client.ipv4, config.client.port);
                 }
                 network.Connect(ep);
             }
@@ -83,10 +80,7 @@ public class GameSystem : ComponentSystem
                 }
                 else if (config.server.type == "RawConnection")
                 {
-                    RawNetworkAddress address = default(RawNetworkAddress);
-                    address.ipv4 = config.client.ipv4;
-                    address.port = config.client.port;
-                    ep.rawNetworkAddress = address;
+                    ep = NetworkEndPoint.Parse(config.client.ipv4, config.client.port);
                 }
                 network.Listen(ep);
             }
