@@ -8,9 +8,13 @@ public class RemoveDeadSystem : ComponentSystem
 	{
 		Entities.ForEach((Entity entity, ref Health health, ref Translation pos, ref PlayerTag tag) =>
 		{
-			if (health.Value <= 0)
+			// Only call the player died event from the server
+			if (BoltNetwork.IsServer)
 			{
-				Settings.PlayerDied(tag.playerIdx);
+				if (health.Value <= 0)
+				{
+					Settings.PlayerDied(tag.playerIdx);
+				}
 			}
 		});
 

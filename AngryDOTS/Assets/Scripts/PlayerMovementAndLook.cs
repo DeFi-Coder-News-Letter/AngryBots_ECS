@@ -18,10 +18,18 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 
 	[Header("Player Identity")]
 	public int idx;
+	
+	public float fireRate = .1f;
 
 	Rigidbody playerRigidbody;
 
-	Vector3 moveVector = Vector3.zero; 
+	Vector3 moveVector = Vector3.zero;
+	public Vector3 lookAtVector = Vector3.zero;
+
+	bool fire = false;
+	float timer;
+	PlayerShooting playerShooting;
+
 	public bool IsDead 
 	{
 		get{ return isDead;}
@@ -32,6 +40,7 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 	void Awake()
 	{
 		playerRigidbody = GetComponent<Rigidbody>();
+		playerShooting = GetComponent<PlayerShooting>();
 		mainCamera = Camera.main;
 	}
 	public override void Attached()
@@ -39,9 +48,15 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 		// This couples the Transform property of the State with the GameObject Transform
 		state.SetTransforms(state.Transform, transform);
 		state.SetAnimator(GetComponent<Animator>());
+		//state.AddCallback("LookingAt", () => TurnThePlayer(state.LookingAt));
 
 		state.Animator.SetLayerWeight(0, 1);
 		state.Animator.SetLayerWeight(1, 1);
+
+		state.OnFire = () =>
+		{
+			playerShooting.Fire();
+		};
 	}
 
 	//Only runs in owner of the game object
@@ -50,8 +65,11 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 		IMainPlayerCommandInput input = MainPlayerCommand.Create();
 
 		input.MoveVector = moveVector;
+		input.Fire = fire;
+		input.LookAtVector = lookAtVector;
 
 		entity.QueueInput(input);
+
 	}
 
 	public override void ExecuteCommand(Command command, bool resetState)
@@ -65,13 +83,19 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 		{
 
 			MoveThePlayer(cmd.Input.MoveVector);
-			TurnThePlayer();
+			TurnThePlayer(cmd.Input.LookAtVector);
 
 			cmd.Result.Position = transform.position;
 
 			if(cmd.IsFirstExecution)
 			{
-				AnimateThePlayer(cmd.Input.MoveVector);
+				if (cmd.Input.Fire)
+				{
+					playerShooting.Fire();
+					// Notify third party that this player has fired
+					state.Fire();
+				}
+				AnimateThePlayer(cmd.Input.MoveVector);			
 			}
 		}
 	}
@@ -97,7 +121,34 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 		Vector3 desiredDirection = cameraForward * inputDirection.z + cameraRight * inputDirection.x;
 
 		moveVector = desiredDirection;
-		
+
+		timer += Time.deltaTime;
+
+		if (Input.GetButton("Fire1") && timer >= fireRate && !IsDead)
+		{
+
+			fire = true;
+			timer = 0f;
+		}
+		else
+		{
+			fire = false;
+		}
+
+
+		if (Application.isFocused) // workaround to prevent all the players to look in the same dir when playin in the same pc
+		{
+			Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+
+			if (Physics.Raycast(ray, out hit, whatIsGround))
+			{
+				Vector3 playerToMouse = hit.point - transform.position;
+				playerToMouse.y = 0f;
+				lookAtVector = playerToMouse.normalized;
+			}
+		}
+
 	}
 
 	void MoveThePlayer(Vector3 desiredDirection)
@@ -106,22 +157,13 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 		movement = movement.normalized * speed * Time.deltaTime;
 
 		playerRigidbody.MovePosition(transform.position + movement);
+
 	}
 
-	void TurnThePlayer()
+	void TurnThePlayer(Vector3 arg)
 	{
-		Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-
-		if (Physics.Raycast(ray, out hit, whatIsGround))
-		{
-			Vector3 playerToMouse = hit.point - transform.position;
-			playerToMouse.y = 0f;
-			playerToMouse.Normalize();
-
-			Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
-			playerRigidbody.MoveRotation(newRotation);
-		}
+		Quaternion newRotation = Quaternion.LookRotation(arg);
+		playerRigidbody.MoveRotation(newRotation);
 	}
 
 	void AnimateThePlayer(Vector3 desiredDirection)

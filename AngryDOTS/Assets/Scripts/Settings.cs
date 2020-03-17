@@ -29,6 +29,15 @@ public class Settings : MonoBehaviour
 		get { return instance.players.Count; }
 	}
 
+
+	public static void AddPlayer(GameObject player)
+	{
+		player.GetComponent<PlayerToEntityConversion>().playerIdxValue = instance.players.Count;
+
+		instance.players.Add(player.transform);
+		instance.playersComp.Add(player.GetComponent<PlayerMovementAndLook>());
+	}
+
 	public static NativeArray<float3> PlayerPositions
 	{
 		get
@@ -55,11 +64,13 @@ public class Settings : MonoBehaviour
 		else
 			instance = this;
 
-		players.Capacity = playersComp.Count;
-		for (int i=0; i < playersComp.Count; ++i)
-		{
-			players.Add(playersComp[i].transform);
-		}
+		//Atach the players as they connect
+		
+		//players.Capacity = playersComp.Count;
+		//for (int i=0; i < playersComp.Count; ++i)
+		//{
+		//	players.Add(playersComp[i].transform);
+		//}
 	}
 
 	public static Vector3 GetPlayerPosition(int idx)
@@ -101,14 +112,7 @@ public class Settings : MonoBehaviour
 			return false;
 		}
 
-		for (int i=0; i < instance.players.Count; ++i)
-		{
-			if (!instance.playersComp[i].IsDead)
-			{
-				return true;
-			}
-		}
-		return false;
+		return GetPlayerAliveCount() > 0;
 	}
 
 	public static int GetPlayerAliveCount()

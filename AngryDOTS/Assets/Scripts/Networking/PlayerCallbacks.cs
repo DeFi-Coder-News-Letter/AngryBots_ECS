@@ -14,4 +14,13 @@ public class PlayerCallbacks : Bolt.GlobalEventListener
         var brain = Camera.main.gameObject.GetComponent<Cinemachine.CinemachineBrain>();
         brain.ActiveVirtualCamera.Follow = entity.gameObject.transform;
     }
+
+    public override void EntityAttached(BoltEntity entity)
+    {
+        var comp = entity.GetComponent<PlayerMovementAndLook>();
+        if (comp)
+        {
+            Settings.AddPlayer(comp.gameObject);
+        }
+    }
 }

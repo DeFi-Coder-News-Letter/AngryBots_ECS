@@ -19021,10 +19021,12 @@ MonoBehaviour:
   speed: 4.5
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   playerHealth: 1
   playerAnimator: {fileID: 95790324078749254}
   idx: 0
+  fireRate: 0.1
+  lookAtVector: {x: 0, y: 0, z: 0}
 --- !u!114 &114167452494013206
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19042,7 +19044,6 @@ MonoBehaviour:
   gunBarrel: {fileID: 4129155176228248}
   shotVFX: {fileID: 198063976594163044}
   shotAudio: {fileID: 82777586598894398}
-  fireRate: 0.01
   spreadAmount: 20
   bulletPrefab: {fileID: 1218724716591446, guid: c4b4b81382c254a999d09f9375fbe2c7,
     type: 3}
@@ -19087,7 +19088,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sceneGuid: 
   _serializerGuid: 088e1aac-8af6-4b5b-a332-ca2d84062254
-  _prefabId: 1
+  _prefabId: 2
   _updateRate: 1
   _autoFreezeProxyFrames: 0
   _clientPredicted: 1

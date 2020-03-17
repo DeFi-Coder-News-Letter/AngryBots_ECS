@@ -5,6 +5,7 @@ public class TutorialServerCallbacks : Bolt.GlobalEventListener
 {
     void Awake()
     {
+        
         MainPlayerObjectRegistry.CreateServerPlayer();
     }
 
@@ -15,6 +16,9 @@ public class TutorialServerCallbacks : Bolt.GlobalEventListener
 
     public override void SceneLoadLocalDone(string map)
     {
+        var entity = BoltNetwork.Instantiate(BoltPrefabs.ECSSyncProxy);
+        entity.TakeControl();
+
         MainPlayerObjectRegistry.ServerPlayer.Spawn();
     }
 

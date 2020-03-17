@@ -34,7 +34,7 @@ public static class MainPlayerObjectRegistry
     // this simply returns the 'players' list cast to
     // an IEnumerable<T> so that we hide the ability
     // to modify the player list from the outside.
-    public static IEnumerable<MainPlayerObject> AllPlayers
+    public static List<MainPlayerObject> AllPlayers
     {
         get { return players; }
     }

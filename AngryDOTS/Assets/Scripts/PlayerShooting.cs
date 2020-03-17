@@ -12,7 +12,7 @@ public class PlayerShooting : MonoBehaviour
 	public Transform gunBarrel;
 	public ParticleSystem shotVFX;
 	public AudioSource shotAudio;
-	public float fireRate = .1f;
+	
 	public int spreadAmount = 20;
 
 	[Header("Bullets")]
@@ -20,7 +20,6 @@ public class PlayerShooting : MonoBehaviour
 
 	private PlayerMovementAndLook playerComp;
 
-	float timer;
 
 	EntityManager manager;
 	Entity bulletEntityPrefab;
@@ -37,38 +36,32 @@ public class PlayerShooting : MonoBehaviour
 		}
 	}
 
-	void Update()
+	public void Fire()
 	{
-		timer += Time.deltaTime;
+		Vector3 rotation = gunBarrel.rotation.eulerAngles;
+		rotation.x = 0f;
 
-		if (Input.GetButton("Fire1") && timer >= fireRate && !playerComp.IsDead)
+		if (useECS)
 		{
-			Vector3 rotation = gunBarrel.rotation.eulerAngles;
-			rotation.x = 0f;
-
-			if (useECS)
-			{
-				if (spreadShot)
-					SpawnBulletSpreadECS(rotation);
-				else
-					SpawnBulletECS(rotation);
-			}
+			if (spreadShot)
+				SpawnBulletSpreadECS(rotation);
 			else
-			{
-				if (spreadShot)
-					SpawnBulletSpread(rotation);
-				else
-					SpawnBullet(rotation);
-			}
-
-			timer = 0f;
-
-			if (shotVFX)
-				shotVFX.Play();
-
-			if (shotAudio)
-				shotAudio.Play();
+				SpawnBulletECS(rotation);
 		}
+		else
+		{
+			if (spreadShot)
+				SpawnBulletSpread(rotation);
+			else
+				SpawnBullet(rotation);
+		}
+
+
+		if (shotVFX)
+			shotVFX.Play();
+
+		if (shotAudio)
+			shotAudio.Play();
 	}
 
 	void SpawnBullet(Vector3 rotation)

@@ -45,6 +45,7 @@ public class TurnTowardsPlayerSystem : JobComponentSystem
 
 	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
+
 		if (!Settings.AnyPlayerAlive())
 			return inputDeps;
 
