@@ -1,0 +1,14 @@
+{
+    "client":
+    {
+        "type": "LoopbackIpv4",
+        "port": "7979",
+        "ipv4": ""
+    },
+    "server":
+    {
+        "type": "AnyIpv4",
+        "port": "7979",
+        "ipv4": ""
+    }
+}

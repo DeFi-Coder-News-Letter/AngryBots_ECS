@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Physics;
 using UnityEngine;
 
 [UpdateInGroup(typeof(ClientSimulationSystemGroup))]
@@ -40,24 +41,29 @@ public class PlayerInputSystem : ComponentSystem
         var input = default(PlayerInput);
         input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
 
+        // Movement direction
         input.horizontal = Input.GetAxis("Horizontal");
         input.vertical = Input.GetAxis("Vertical");
 
-        //Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        LayerMask whatIsGround = LayerMask.NameToLayer("Default");
+        // Which direction is looking? Mouse raycast
+        UnityEngine.Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        //if (Physics.Raycast(ray, out hit, whatIsGround))
-        if (Physics.Raycast(ray, out hit))
+        var physicsWorldSystem = World.GetExistingSystem<Unity.Physics.Systems.BuildPhysicsWorld>();
+        var collisionWorld = physicsWorldSystem.PhysicsWorld.CollisionWorld;
+        var rayInput = new Unity.Physics.RaycastInput();
+        rayInput.Start = ray.origin;
+        rayInput.End = ray.origin + ray.direction * 100.0f;
+        rayInput.Filter = Unity.Physics.CollisionFilter.Default;
+
+        Unity.Physics.RaycastHit hit2 = new Unity.Physics.RaycastHit();
+        bool haveHit = collisionWorld.CastRay(rayInput, out hit2);
+        if (haveHit)
         {
-            input.mousePosX = hit.point.x;
-            input.mousePosZ = hit.point.z;
+            input.mousePosX = hit2.Position.x;
+            input.mousePosZ = hit2.Position.z;
         }
-        //input.mousePosX = Input.mousePosition.;
-        //input.mousePosZ = hit.point.z;
-
-        //input.fire = Input.GetMouseButton(0) ? 1 : 0;
+        
+        // Is he firing?
         input.fire = Input.GetMouseButtonDown(0) ? 1 : 0;
 
         // Append the command data
