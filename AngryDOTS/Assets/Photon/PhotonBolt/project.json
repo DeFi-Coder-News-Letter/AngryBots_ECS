@@ -504,6 +504,7 @@
         {
           "Name": "right",
           "Enabled": true,
+          "Expanded": true,
           "Comment": "",
           "PropertyType": {
             "$type": "Bolt.Compiler.PropertyTypeBool, bolt.compiler"
@@ -648,6 +649,7 @@
         {
           "Name": "velocity",
           "Enabled": true,
+          "Expanded": true,
           "Comment": "",
           "PropertyType": {
             "$type": "Bolt.Compiler.PropertyTypeVector, bolt.compiler",
@@ -691,6 +693,7 @@
         {
           "Name": "jumpFrames",
           "Enabled": true,
+          "Expanded": true,
           "Comment": "",
           "PropertyType": {
             "$type": "Bolt.Compiler.PropertyTypeInteger, bolt.compiler",
@@ -2503,7 +2506,6 @@
         {
           "Name": "FlashColor",
           "Enabled": true,
-          "Expanded": true,
           "ReplicationMode": 1,
           "Priority": 1,
           "PropertyType": {
@@ -3343,6 +3345,7 @@
           },
           "AssetSettings": {
             "$type": "Bolt.Compiler.PropertyStateSettings, bolt.compiler",
+            "SmoothingAlgorithm": 2,
             "ExtrapolationErrorTolerance": 0.25,
             "_ExtrapolationCorrectionFrames": 6,
             "ExtrapolationMaxFrames": 9,
@@ -3645,32 +3648,6 @@
           }
         },
         {
-          "Name": "B",
-          "Enabled": true,
-          "Expanded": true,
-          "ReplicationMode": 1,
-          "Priority": 1,
-          "PropertyType": {
-            "$type": "Bolt.Compiler.PropertyTypeBool, bolt.compiler"
-          },
-          "AssetSettings": {
-            "$type": "Bolt.Compiler.PropertyCommandSettings, bolt.compiler"
-          }
-        },
-        {
-          "Name": "C",
-          "Enabled": true,
-          "Expanded": true,
-          "ReplicationMode": 1,
-          "Priority": 1,
-          "PropertyType": {
-            "$type": "Bolt.Compiler.PropertyTypeBool, bolt.compiler"
-          },
-          "AssetSettings": {
-            "$type": "Bolt.Compiler.PropertyCommandSettings, bolt.compiler"
-          }
-        },
-        {
           "Name": "Fire",
           "Enabled": true,
           "Expanded": true,
@@ -3769,10 +3746,12 @@
             ]
           },
           "AssetSettings": {
-            "$type": "Bolt.Compiler.PropertyCommandSettings, bolt.compiler"
+            "$type": "Bolt.Compiler.PropertyCommandSettings, bolt.compiler",
+            "SmoothCorrection": true
           }
         }
       ],
+      "SmoothFrames": 30,
       "Properties": [],
       "Name": "MainPlayerCommand",
       "Guid": "640cfb31-275d-47cb-8f04-c35b01c585f4",
@@ -3920,6 +3899,30 @@
       },
       "Name": "EelsState",
       "Guid": "d4f889d1-5d81-4130-b2b2-0c1feede4965",
+      "Groups": [
+        "samples"
+      ]
+    },
+    {
+      "$type": "Bolt.Compiler.EventDefinition, bolt.compiler",
+      "Properties": [
+        {
+          "Name": "PlayerIdx",
+          "Enabled": true,
+          "Expanded": true,
+          "ReplicationMode": 1,
+          "Priority": 1,
+          "PropertyType": {
+            "$type": "Bolt.Compiler.PropertyTypeInteger, bolt.compiler",
+            "MaxValue": 255
+          },
+          "AssetSettings": {
+            "$type": "Bolt.Compiler.PropertyEventSettings, bolt.compiler"
+          }
+        }
+      ],
+      "Name": "PlayerDied",
+      "Guid": "33e4fcb4-de23-4e62-b88a-20b7b942419b",
       "Groups": [
         "samples"
       ]

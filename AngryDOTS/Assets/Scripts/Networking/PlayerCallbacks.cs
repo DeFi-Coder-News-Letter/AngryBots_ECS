@@ -23,4 +23,9 @@ public class PlayerCallbacks : Bolt.GlobalEventListener
             Settings.AddPlayer(comp.gameObject);
         }
     }
+
+    public override void OnEvent(PlayerDied evnt)
+    {
+        Settings.PlayerDied(evnt.PlayerIdx);
+    }
 }

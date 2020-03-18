@@ -19026,7 +19026,6 @@ MonoBehaviour:
   playerAnimator: {fileID: 95790324078749254}
   idx: 0
   fireRate: 0.1
-  lookAtVector: {x: 0, y: 0, z: 0}
 --- !u!114 &114167452494013206
 MonoBehaviour:
   m_ObjectHideFlags: 0

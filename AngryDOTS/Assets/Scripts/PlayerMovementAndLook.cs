@@ -23,12 +23,10 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 
 	Rigidbody playerRigidbody;
 
-	Vector3 moveVector = Vector3.zero;
-	public Vector3 lookAtVector = Vector3.zero;
-
-	bool fire = false;
+ 
 	float timer;
 	PlayerShooting playerShooting;
+
 
 	public bool IsDead 
 	{
@@ -62,45 +60,6 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 	//Only runs in owner of the game object
 	public override void SimulateController()
 	{
-		IMainPlayerCommandInput input = MainPlayerCommand.Create();
-
-		input.MoveVector = moveVector;
-		input.Fire = fire;
-		input.LookAtVector = lookAtVector;
-
-		entity.QueueInput(input);
-
-	}
-
-	public override void ExecuteCommand(Command command, bool resetState)
-	{
-		MainPlayerCommand cmd = command as MainPlayerCommand;
-		if(resetState)
-		{
-			transform.position = cmd.Result.Position;
-		}
-		else
-		{
-
-			MoveThePlayer(cmd.Input.MoveVector);
-			TurnThePlayer(cmd.Input.LookAtVector);
-
-			cmd.Result.Position = transform.position;
-
-			if(cmd.IsFirstExecution)
-			{
-				if (cmd.Input.Fire)
-				{
-					playerShooting.Fire();
-					// Notify third party that this player has fired
-					state.Fire();
-				}
-				AnimateThePlayer(cmd.Input.MoveVector);			
-			}
-		}
-	}
-	void FixedUpdate()
-	{
 		if (isDead)
 			return;
 
@@ -120,22 +79,18 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 		//Try not to use var for roadshows or learning code
 		Vector3 desiredDirection = cameraForward * inputDirection.z + cameraRight * inputDirection.x;
 
-		moveVector = desiredDirection;
+		Vector3 moveVector = desiredDirection;
+		Vector3 lookAtVector = Vector3.zero;
 
 		timer += Time.deltaTime;
-
+		bool fire = false;
 		if (Input.GetButton("Fire1") && timer >= fireRate && !IsDead)
 		{
 
 			fire = true;
 			timer = 0f;
 		}
-		else
-		{
-			fire = false;
-		}
-
-
+		
 		if (Application.isFocused) // workaround to prevent all the players to look in the same dir when playin in the same pc
 		{
 			Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
@@ -149,7 +104,47 @@ public class PlayerMovementAndLook : Bolt.EntityBehaviour<IMainPlayerState>
 			}
 		}
 
+		IMainPlayerCommandInput input = MainPlayerCommand.Create();
+
+		input.MoveVector = moveVector;
+		input.Fire = fire;
+		input.LookAtVector = lookAtVector;
+
+		entity.QueueInput(input);
+
 	}
+
+	public override void ExecuteCommand(Command command, bool resetState)
+	{
+		MainPlayerCommand cmd = command as MainPlayerCommand;
+		if(resetState)
+		{
+			playerRigidbody.position = cmd.Result.Position;
+			playerRigidbody.velocity = cmd.Result.Velocity ;
+
+		}
+		else
+		{
+			MoveThePlayer(cmd.Input.MoveVector);
+			TurnThePlayer(cmd.Input.LookAtVector);
+
+			//cmd.Result.Position = transform.position;
+			cmd.Result.Position = playerRigidbody.position;
+			cmd.Result.Velocity = playerRigidbody.velocity;
+
+			if (cmd.IsFirstExecution)
+			{
+				if (cmd.Input.Fire)
+				{
+					playerShooting.Fire();
+					// Notify third party that this player has fired
+					state.Fire();
+				}
+				AnimateThePlayer(cmd.Input.MoveVector);			
+			}
+		}
+	}
+
 
 	void MoveThePlayer(Vector3 desiredDirection)
 	{

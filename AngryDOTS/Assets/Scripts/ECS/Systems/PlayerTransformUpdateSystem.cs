@@ -9,7 +9,6 @@ public class PlayerTransformUpdateSystem : ComponentSystem
 		if (!Settings.AnyPlayerAlive())
 			return;
 
-
 		Entities.WithAll<PlayerTag>().ForEach((ref Translation pos, ref PlayerTag tag) =>
 		{
 			pos = new Translation { Value = Settings.PlayerPositions[tag.playerIdx] };

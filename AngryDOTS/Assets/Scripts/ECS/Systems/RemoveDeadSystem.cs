@@ -13,18 +13,20 @@ public class RemoveDeadSystem : ComponentSystem
 			{
 				if (health.Value <= 0)
 				{
-					Settings.PlayerDied(tag.playerIdx);
-				}
-			}
-		});
+					PlayerDied playerDied = PlayerDied.Create();
+					playerDied.PlayerIdx = tag.playerIdx;
+					playerDied.Send();
+                }
+            }
+        });
 
-		Entities.ForEach((Entity entity, ref Health health, ref Translation pos, ref EnemyTag tag) =>
-		{
-			if (health.Value <= 0)
-			{
-				PostUpdateCommands.DestroyEntity(entity);
-				BulletImpactPool.PlayBulletImpact(pos.Value);
-			}
-		});
+        Entities.ForEach((Entity entity, ref Health health, ref Translation pos, ref EnemyTag tag) =>
+        {             
+            if (health.Value <= 0)
+            {
+                PostUpdateCommands.DestroyEntity(entity);
+                BulletImpactPool.PlayBulletImpact(pos.Value);
+            }            
+        });
 	}
 }
