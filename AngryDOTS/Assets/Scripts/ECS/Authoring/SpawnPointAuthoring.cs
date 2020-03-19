@@ -15,6 +15,5 @@ public class SpawnPointAuthoring : MonoBehaviour, IConvertGameObjectToEntity
     private void OnDrawGizmos()
     {
         Gizmos.DrawWireSphere(transform.position, 0.5f);
-        Gizmos.DrawIcon(transform.position, "SpawnerGizmoLogo.png", true);
     }
 }
