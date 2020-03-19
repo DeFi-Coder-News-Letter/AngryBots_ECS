@@ -3,7 +3,6 @@ using Unity.NetCode;
 using Unity.Networking.Transport;
 using Unity.Rendering;
 using UnityEngine;
-using static Unity.Networking.Transport.NetworkEndPoint;
 
 // Control system updating in the default world
 [UpdateInWorld(UpdateInWorld.TargetWorld.Default)]

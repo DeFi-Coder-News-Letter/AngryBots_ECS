@@ -11,4 +11,10 @@ public class SpawnPointAuthoring : MonoBehaviour, IConvertGameObjectToEntity
         SpawnPoint sp = new SpawnPoint { PlayerNumber = PlayerNumber, Position = transform.position, Rotation = transform.rotation };
         manager.AddComponentData(entity, sp);
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, 0.5f);
+        Gizmos.DrawIcon(transform.position, "SpawnerGizmoLogo.png", true);
+    }
 }
